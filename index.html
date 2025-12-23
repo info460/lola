@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kreatív műhely – egyedi ajándékokra</title>
+
+  <!-- Fonts (közelebb a látványtervhez) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Allura&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #F6F5F2;
+      --text: #2E2E2C;
+
+      --mustard: #F2B705;
+      --terracotta: #C46A3B;
+      --teal: #2FA4A9;
+
+      --sage: #9DB6A3;
+      --rose: #D9A5A1;
+      --warmgray: #BDB9B3;
+
+      --shadow: 0 14px 40px rgba(46,46,44,.10);
+      --shadow-soft: 0 10px 25px rgba(46,46,44,.08);
+      --radius: 16px;
+      --max: 1200px;
+
+      --script: "Allura", cursive;
+      --ui: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      --scribble: "Kalam", cursive;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--ui);
+      color: var(--text);
+      background: var(--bg);
+      overflow-x:hidden;
+    }
+    a{ color:inherit; text-decoration:none; }
+    img{ max-width:100%; display:block; }
+    .container{ width:min(var(--max), calc(100% - 64px)); margin:0 auto; }
+
+    /* finom papír textúra (kép nélkül) */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 10% 18%, rgba(46,46,44,.035), transparent 35%),
+        radial-gradient(circle at 85% 24%, rgba(196,106,59,.03), transparent 38%),
+        radial-gradient(circle at 18% 82%, rgba(47,164,169,.025), transparent 42%),
+        repeating-linear-gradient(0deg, rgba(46,46,44,.015) 0 1px, transparent 1px 9px);
+      mix-blend-mode:multiply;
+      opacity:.9;
+      z-index:0;
+    }
+
+    /* ecsetes szekció háttér (SVG data URI) */
+    .brush-bg{
+      position:relative;
+      z-index:1;
+    }
+    .brush-bg::before{
+      content:"";
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      top: 10px;
+      width:min(1280px, 96vw);
+      height:100%;
+      pointer-events:none;
+      opacity:.85;
+      background-repeat:no-repeat;
+      background-position:center top;
+      background-size:cover;
+      #background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='520' viewBox='0 0 1600 520'%3E%3Cdefs%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 .22 0'/%3E%3C/filter%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%23F6F5F2'/%3E%3Cstop offset='0.45' stop-color='%23F3EFE7'/%3E%3Cstop offset='1' stop-color='%23F6F5F2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M90,120 C280,20 520,210 760,120 C1020,20 1220,260 1510,140 L1510,470 C1210,520 960,420 750,470 C520,520 280,410 90,470 Z' fill='url(%23g)'/%3E%3Cpath d='M120,150 C320,60 520,220 770,140 C1010,70 1240,250 1480,170' stroke='%23C46A3B' stroke-opacity='.12' stroke-width='34' stroke-linecap='round'/%3E%3Cpath d='M140,190 C320,110 520,250 790,180 C1050,110 1240,290 1460,220' stroke='%232FA4A9' stroke-opacity='.10' stroke-width='26' stroke-linecap='round'/%3E%3Cpath d='M150,240 C360,190 520,300 820,250 C1090,210 1250,330 1450,290' stroke='%23F2B705' stroke-opacity='.10' stroke-width='22' stroke-linecap='round'/%3E%3Crect x='0' y='0' width='1600' height='520' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+      border-radius: 26px;
+      z-index:-1;
+    }
+
+    /* Header */
+    header{
+      position:fixed; inset:0 0 auto 0;
+      z-index:50;
+      transition: background .25s ease, box-shadow .25s ease, backdrop-filter .25s ease;
+      background: transparent;
+    }
+    header.scrolled{
+      background: rgba(246,245,242,.78);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(46,46,44,.07);
+    }
+    .nav{
+      height: 78px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:18px;
+    }
+    .brand{ display:flex; align-items:center; gap:12px; }
+    /* LOGO in header */
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width: 150px;
+    }
+    .logo img{
+      height:52px;
+      width:auto;
+      border-radius: 10px;
+      background: transparent;
+      filter: drop-shadow(0 10px 18px rgba(46,46,44,.08));
+    }
+
+    .brand-name .script{
+      font-family: var(--script);
+      font-size: 28px;
+      line-height:1;
+      letter-spacing:.2px;
+    }
+    .brand-name .sub{
+      font-size: 12px;
+      opacity: .72;
+      margin-top: 2px;
+    }
+
+    nav.menu{
+      display:flex; align-items:center; gap:18px;
+      font-size:14px;
+      opacity:.92;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    nav.menu a{
+      padding: 10px 10px;
+      border-radius: 12px;
+    }
+    nav.menu a:hover{ background: rgba(255,255,255,.55); }
+
+    .lang{
+      display:flex; align-items:center; gap:8px;
+      padding-left:10px;
+      border-left:1px solid rgba(46,46,44,.14);
+      margin-left:6px;
+    }
+    .lang button{
+      border:0; background:transparent; font:inherit;
+      font-size:12px; letter-spacing:.12em;
+      padding: 8px 10px; border-radius:999px;
+      cursor:pointer; opacity:.68;
+    }
+    .lang button.active{
+      opacity:1;
+      background: rgba(255,255,255,.65);
+      box-shadow: 0 8px 22px rgba(46,46,44,.06);
+      border: 1px solid rgba(46,46,44,.10);
+    }
+
+    /* Buttons */
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(46,46,44,.14);
+      cursor:pointer;
+      transition: transform .15s ease, filter .15s ease, background .15s ease;
+      font-weight: 600;
+      font-size: 14px;
+      user-select:none;
+    }
+    .btn-primary{
+      background: var(--terracotta);
+      color:#fff;
+      border-color: rgba(46,46,44,.12);
+      box-shadow: var(--shadow-soft);
+    }
+    .btn-primary:hover{ transform: translateY(-2px); filter: brightness(.97); }
+    .btn-ghost{
+      background: rgba(255,255,255,.58);
+    }
+    .btn-ghost:hover{ transform: translateY(-2px); }
+
+    .link-underline{
+      position:relative;
+      display:inline-block;
+      padding: 10px 6px;
+      font-weight:600;
+      opacity:.92;
+    }
+    .link-underline::after{
+      content:"";
+      position:absolute;
+      left:2px; right:2px; bottom:6px;
+      height:10px;
+      background:
+        radial-gradient(circle at 12% 50%, rgba(242,183,5,.55), transparent 60%),
+        radial-gradient(circle at 50% 50%, rgba(47,164,169,.35), transparent 60%),
+        radial-gradient(circle at 86% 50%, rgba(196,106,59,.40), transparent 60%);
+      filter: blur(2px);
+      z-index:-1;
+      transform: rotate(-2deg);
+      border-radius:999px;
+      opacity:.85;
+    }
+
+    main{ padding-top: 78px; position:relative; z-index:1; }
+    section{ padding: 78px 0; }
+
+    .section-title{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:18px;
+      margin-bottom: 22px;
+    }
+    .section-title h2{
+      margin:0;
+      font-family: var(--script);
+      font-weight: 400;
+      font-size: 48px;
+      letter-spacing:.2px;
+    }
+    .section-title p{
+      margin:0;
+      max-width: 520px;
+      font-size: 14px;
+      opacity:.72;
+      line-height:1.6;
+    }
+
+    /* Hero */
+    .hero{ padding: 56px 0 24px; }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 28px;
+      align-items:end;
+    }
+    .hero-photo{
+      border-radius: 18px;
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(46,46,44,.10);
+      background: rgba(255,255,255,.45);
+    }
+    .hero-photo img{ width:100%; height: 540px; object-fit:cover; }
+
+    .polaroid{
+      position:absolute;
+      right: -6px;
+      bottom: -18px;
+      width: min(420px, 90%);
+      background: rgb(255,255,255);
+      border: 1px solid rgba(46,46,44,.12);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 14px 14px 16px;
+      transform: rotate(2.2deg);
+    }
+    .polaroid::before{
+      content:"";
+      position:absolute;
+      top:-10px; left:30px;
+      width: 86px; height: 22px;
+      background: rgba(242,183,5,.75);
+      border: 1px solid rgba(46,46,44,.30);
+      border-radius: 8px;
+      transform: rotate(-8deg);
+    }
+    .polaroid img{
+      width:100%;
+      height: 240px;
+      object-fit: cover;
+      border-radius: 14px;
+    }
+    .polaroid .cap{
+      margin-top: 10px;
+      font-size: 12px;
+      opacity: .74;
+    }
+
+    .hero-right{ position:relative; }
+    .hero-copy{ padding: 18px 8px 0; }
+    .hero-copy .script{
+      font-family: var(--script);
+      font-size: 72px;
+      line-height: .98;
+      margin: 0 0 10px;
+      font-weight: 400;
+    }
+    .hero-copy .lead{
+      margin: 0 0 18px;
+      font-size: 16px;
+      line-height: 1.55;
+      opacity: .78;
+      max-width: 520px;
+    }
+    .hero-actions{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+
+    .doodle{
+      position:absolute;
+      left:-10px; top:-18px;
+      width: 160px; height: 86px;
+      opacity:.55;
+      transform: rotate(-8deg);
+      pointer-events:none;
+      filter: blur(.15px);
+    }
+
+    /* Image grid (bohém-aszimmetrikus) */
+    .img-grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .tile{
+      position:relative;
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(46,46,44,.10);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,.40);
+      min-height: 220px;
+      max-height: 400px;
+    }
+    .tile img{ width:100%; height:100%; object-fit:cover; transform: scale(1.02); transition: transform .25s ease; }
+    .tile:hover img{ transform: scale(1.06); }
+    .tile .tag{
+      position:absolute; left: 14px; bottom: 12px;
+      font-family: var(--scribble);
+      font-weight:700;
+      font-size: 22px;
+      letter-spacing:.3px;
+      background: rgba(246,245,242,.78);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(46,46,44,.10);
+    }
+    .tile.t1{ grid-column: 1 / span 4; grid-row: 1; }
+    .tile.t2{ grid-column: 5 / span 3; grid-row: 1; }
+    .tile.t3{ grid-column: 8 / span 5; grid-row: 1; }
+    .tile.t4{ grid-column: 1 / span 5; grid-row: 2; }
+    .tile.t5{ grid-column: 6 / span 7; grid-row: 2; }
+
+/*
+    .tile.t1{ grid-column: 1 / span 4; grid-row: 1; }
+    .tile.t2{ grid-column: 5 / span 3; grid-row: 1; min-height: 270px; transform: translateY(16px); }
+    .tile.t3{ grid-column: 8 / span 5; grid-row: 1; min-height: 330px; }
+    .tile.t4{ grid-column: 1 / span 5; grid-row: 2; min-height: 310px; transform: translateY(-10px); }
+    .tile.t5{ grid-column: 6 / span 7; grid-row: 2; min-height: 270px; }
+*/
+
+    /* Collage */
+    .collage{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+      align-items:start;
+    }
+    .frame{
+      position:relative;
+      background: rgba(255,255,255,.78);
+      border: 1px solid rgba(46,46,44,.12);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .frame img{
+      border-radius: 14px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .frame .note{
+      position:absolute;
+      top: 10px; right: 12px;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(46,46,44,.10);
+      background: rgba(246,245,242,.82);
+      opacity:.9;
+    }
+    .c1{ grid-column: 1 / span 4; transform: rotate(-1.2deg); }
+    .c1 img{ height: 360px; }
+    .c2{ grid-column: 5 / span 8; transform: rotate(.6deg); }
+    .c2 img{ height: 360px; }
+    .c3{ grid-column: 1 / span 7; transform: rotate(.8deg); }
+    .c3 img{ height: 280px; }
+    .c4{ grid-column: 8 / span 5; transform: rotate(-.7deg); }
+    .c4 img{ height: 280px; }
+
+    .center-actions{ display:flex; justify-content:center; margin-top:22px; }
+
+    /* Process */
+    .process{
+      display:flex; align-items:center; justify-content:center;
+      gap: 22px; flex-wrap:wrap;
+      padding: 12px 0;
+    }
+    .step{
+      display:flex; align-items:center; gap:10px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(46,46,44,.12);
+      border-radius: 999px;
+      padding: 10px 14px;
+      box-shadow: 0 10px 24px rgba(46,46,44,.06);
+      animation: floaty 5.2s ease-in-out infinite;
+    }
+    .step:nth-child(2){ animation-delay:.6s; }
+    .step:nth-child(3){ animation-delay:1.2s; }
+    .step:nth-child(4){ animation-delay:1.8s; }
+    @keyframes floaty{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-4px);} }
+    .step .icon{
+      width: 34px; height:34px;
+      border-radius: 12px;
+      display:grid; place-items:center;
+      border: 1px dashed rgba(46,46,44,.18);
+      background: rgba(246,245,242,.82);
+      font-size: 18px;
+    }
+    .step span{ font-weight:600; font-size: 13px; letter-spacing:.02em; }
+    .arrow{ opacity:.35; font-size:18px; }
+
+    /* Shop teaser */
+    .shop-row{ display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; }
+    .product{
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(46,46,44,.10);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,.55);
+      position:relative;
+    }
+    .product img{ height: 280px; width:100%; object-fit:cover; transition: transform .25s ease; }
+    .product:hover img{ transform: scale(1.05); }
+    .product .meta{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+      padding: 12px 14px 14px;
+    }
+    .product .name{ font-weight:600; font-size:14px; line-height:1.2; }
+    .product .price{ font-weight:600; font-size:14px; opacity:.8; white-space:nowrap; }
+    .badge{
+      position:absolute; top: 14px; left: 14px;
+      background: rgba(246,245,242,.88);
+      border: 1px solid rgba(46,46,44,.10);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Big CTA */
+    .big-cta{ padding: 92px 0; text-align:center; position:relative; }
+    .big-cta h3{
+      margin:0 0 18px;
+      font-family: var(--script);
+      font-size: 78px;
+      font-weight:400;
+      letter-spacing:.1px;
+    }
+    .big-cta .sub{
+      margin: 0 auto 20px;
+      max-width: 640px;
+      opacity:.74;
+      line-height:1.7;
+      font-size: 15px;
+    }
+
+    footer{
+      padding: 44px 0 52px;
+      border-top: 1px solid rgba(46,46,44,.10);
+    }
+    .footer-grid{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap:18px;
+      align-items:start;
+    }
+    .mini{ font-size:13px; opacity:.75; line-height:1.7; }
+    .footer-col h4{
+      margin:0 0 10px;
+      font-size: 13px;
+      letter-spacing:.14em;
+      text-transform: uppercase;
+      opacity:.7;
+    }
+    .footer-col a{
+      display:inline-block;
+      padding: 6px 0;
+      font-size:14px;
+      opacity:.9;
+    }
+    .footer-col a:hover{ opacity:1; text-decoration: underline; }
+
+    .footer-grid .logo img{
+      
+      width: 160px;
+      height: auto;
+      filter: none;
+      background: transparent;
+      margin-bottom:6px;
+    }
+
+
+    /* Responsive */
+    @media (max-width: 1020px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .hero-photo img{ height: 440px; }
+      .polaroid{ position: static; transform: rotate(1.2deg); margin-top: 14px; }
+      .tile.t1,.tile.t2,.tile.t3,.tile.t4,.tile.t5{ grid-column: 1 / -1; transform:none; }
+      .tile{ min-height: 240px; }
+      .collage .c1,.collage .c2,.collage .c3,.collage .c4{ grid-column: 1 / -1; transform:none; }
+      .shop-row{ grid-template-columns: 1fr; }
+      .footer-grid{ grid-template-columns: 1fr; }
+      .section-title{ flex-direction: column; align-items:flex-start; }
+      .section-title h2{ font-size: 44px; }
+      .big-cta h3{ font-size: 60px; }
+    }
+    @media (max-width: 640px){
+      .container{ width: calc(100% - 28px); }
+      .nav{ height: 90px; align-items:flex-start; padding-top: 10px; }
+      .hero-copy .script{ font-size: 56px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header id="siteHeader">
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="#top" aria-label="Home">
+          <div class="logo"><img src="assets/logo-lola.png" alt="LoLa Design & Print logó" /></div> 
+          <div class="brand-name">
+            <div class="script" data-i18n="brand">Kreatív műhely</div>
+            <div class="sub" data-i18n="brand_sub">egyedi ajándékokra</div>
+          </div>
+        </a>
+
+        <nav class="menu" aria-label="Primary">
+          <a href="#services" data-i18n="nav_services">Mit alkotunk</a>
+          <a href="#inspiration" data-i18n="nav_inspiration">Inspirációk</a>
+          <a href="#shop" data-i18n="nav_shop">Shop</a>
+          <a href="#custom" data-i18n="nav_custom">Egyedi kérés</a>
+
+          <div class="lang" role="group" aria-label="Language switcher">
+            <button class="active" data-lang="hu">HU</button>
+            <button data-lang="en">EN</button>
+            <button data-lang="nl">NL</button>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero brush-bg">
+      <div class="container">
+        <div class="hero-grid">
+          <div style="position:relative;">
+            <div class="hero-photo">
+              <img src="assets/hero-workshop.png" alt="Műhely hangulatkép (cseréld saját fotóra)" />
+            </div>
+            <div class="polaroid">
+              <img src="assets/hero-detail.png" alt="Részletfotó (cseréld saját fotóra)" />
+              <div class="cap" data-i18n="hero_polaroid_cap">Részletek, amikből történet lesz.</div>
+            </div>
+          </div>
+
+          <div class="hero-right">
+            <svg class="doodle" viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M10 80c30-50 60 60 90 0s60 40 110-10" fill="none" stroke="rgba(46,46,44,.35)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M40 30c20 10 30 30 10 40" fill="none" stroke="rgba(196,106,59,.45)" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="175" cy="28" r="7" fill="rgba(47,164,169,.35)"/>
+              <circle cx="195" cy="44" r="5" fill="rgba(242,183,5,.45)"/>
+            </svg>
+
+            <div class="hero-copy">
+              <h1 class="script" data-i18n="hero_title">Kreatív műhely</h1>
+              <p class="lead" data-i18n="hero_lead">
+                Egyedi ajándékok és promóciós tárgyak – hangulatból, ötletből, szerethető részletekből.
+              </p>
+
+              <div class="hero-actions">
+                <a class="btn btn-primary" href="#custom" data-i18n="hero_cta_primary">Egyedi rendelés</a>
+                <a class="btn btn-ghost" href="#inspiration" data-i18n="hero_cta_secondary">Inspiráció</a>
+                <a class="link-underline" href="#shop" data-i18n="hero_cta_link">Kész darabok</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES GRID -->
+    <section id="services" class="brush-bg">
+      <div class="container">
+        <div class="section-title">
+          <h2 data-i18n="services_title">Mit alkotunk</h2>
+          <p data-i18n="services_desc">Kevesebb szöveg, több vizuál: a képek elmondják, mire vagyunk képesek.</p>
+        </div>
+
+        <div class="img-grid" aria-label="Services image grid">
+          <a class="tile t1" href="#custom">
+            <img src="assets/service-print.png" alt="Print (cseréld saját fotóra)" />
+            <div class="tag">print</div>
+          </a>
+          <a class="tile t2" href="#custom">
+            <img src="assets/service-textile.png" alt="Textile (cseréld saját fotóra)" />
+            <div class="tag">textile</div>
+          </a>
+          <a class="tile t3" href="#custom">
+            <img src="assets/service-wood.png" alt="Wood (cseréld saját fotóra)" />
+            <div class="tag">wood</div>
+          </a>
+          <a class="tile t4" href="#custom">
+            <img src="assets/service-metal.png" alt="Metal (cseréld saját fotóra)" />
+            <div class="tag">metal</div>
+          </a>
+          <a class="tile t5" href="#inspiration">
+            <img src="assets/service-lifestyle.png" alt="Lifestyle ajándék hangulat (cseréld saját fotóra)" />
+            <div class="tag" data-i18n="services_tag_custom">custom</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSPIRATION COLLAGE -->
+    <section id="inspiration" class="brush-bg">
+      <div class="container">
+        <div class="section-title">
+          <h2 data-i18n="insp_title">Inspirációink</h2>
+          <p data-i18n="insp_desc">Kollázs-szerű válogatás. Kattints, és nézd meg közelebbről.</p>
+        </div>
+
+        <div class="collage">
+          <div class="frame c1">
+            <div class="note" data-i18n="tag_gift">gift</div>
+            <img src="assets/insp-1.png" alt="Inspiráció 1 (cseréld saját fotóra)" />
+          </div>
+          <div class="frame c2">
+            <div class="note" data-i18n="tag_promo">promo</div>
+            <img src="assets/insp-2.png" alt="Inspiráció 2 (cseréld saját fotóra)" />
+          </div>
+          <div class="frame c3">
+            <div class="note" data-i18n="tag_custom">custom</div>
+            <img src="assets/insp-3.png" alt="Inspiráció 3 (cseréld saját fotóra)" />
+          </div>
+          <div class="frame c4">
+            <div class="note" data-i18n="tag_detail">detail</div>
+            <img src="assets/insp-4.png" alt="Inspiráció 4 (cseréld saját fotóra)" />
+          </div>
+        </div>
+
+        <div class="center-actions">
+          <a class="btn btn-primary" href="#custom" data-i18n="insp_cta">További munkáink</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section class="brush-bg">
+      <div class="container">
+        <div class="section-title">
+          <h2 data-i18n="process_title">Ahogy készül</h2>
+          <p data-i18n="process_desc">Egyszerű, barátságos folyamat – nem kell mindent előre tudnod.</p>
+        </div>
+
+        <div class="process" aria-label="Process steps">
+          <div class="step"><div class="icon">💡</div><span data-i18n="step_idea">Ötlet</span></div>
+          <div class="arrow">→</div>
+          <div class="step"><div class="icon">✏️</div><span data-i18n="step_design">Tervezés</span></div>
+          <div class="arrow">→</div>
+          <div class="step"><div class="icon">🧪</div><span data-i18n="step_test">Próba</span></div>
+          <div class="arrow">→</div>
+          <div class="step"><div class="icon">🎁</div><span data-i18n="step_done">Készítés</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SHOP TEASER -->
+    <section id="shop" class="brush-bg">
+      <div class="container">
+        <div class="section-title">
+          <h2 data-i18n="shop_title">Kész darabok</h2>
+          <p data-i18n="shop_desc">Kis szériák, gyors örömök. Ha azonnal vinnél valamit.</p>
+        </div>
+
+        <div class="shop-row" aria-label="Shop teaser products">
+          <div class="product">
+            <div class="badge" data-i18n="badge_limited">limitált</div>
+            <img src="assets/prod-1.png" alt="Termék 1 (cseréld saját fotóra)" />
+            <div class="meta">
+              <div class="name" data-i18n="prod1_name">Gravírozott kulcstartó</div>
+              <div class="price">4 500 Ft</div>
+            </div>
+          </div>
+
+          <div class="product">
+            <img src="assets/prod-2.png" alt="Termék 2 (cseréld saját fotóra)" />
+            <div class="meta">
+              <div class="name" data-i18n="prod2_name">Mintás bögre</div>
+              <div class="price">5 900 Ft</div>
+            </div>
+          </div>
+
+          <div class="product">
+            <img src="assets/prod-3.png" alt="Termék 3 (cseréld saját fotóra)" />
+            <div class="meta">
+              <div class="name" data-i18n="prod3_name">Fa notebook borító</div>
+              <div class="price">6 900 Ft</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="center-actions" style="gap:12px; flex-wrap:wrap;">
+          <a class="btn btn-primary" href="#" data-i18n="shop_cta_shop">Shop</a>
+          <a class="btn btn-ghost" href="#custom" data-i18n="shop_cta_custom">Egyedi kérés</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- BIG CTA -->
+    <section class="big-cta brush-bg" id="custom">
+      <div class="container">
+        <h3 data-i18n="bigcta_title">Mi lenne, ha…?</h3>
+        <p class="sub" data-i18n="bigcta_desc">
+          Elég egy vázlat, egy gondolat vagy egy fotó. Segítünk formát adni az ötletednek.
+        </p>
+        <a class="btn btn-primary" href="#" data-i18n="bigcta_btn">Mesélek róla</a>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <div class="logo" style="margin-bottom:12px;">
+              <img src="assets/logo-lola.png" alt="LoLa Design & Print logó" />
+            </div>
+            <div class="brand-name">
+              <div class="script" style="font-size:34px;" data-i18n="footer_brand">Kreatív műhely</div>
+              <div class="mini" data-i18n="footer_note">
+                Nem termékeket mutatunk. Hangulatot, ötleteket és lehetőségeket – kis szériában, nagy figyelemmel.
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h4 data-i18n="footer_links">Linkek</h4>
+            <a href="#services" data-i18n="nav_services">Mit alkotunk</a><br>
+            <a href="#inspiration" data-i18n="nav_inspiration">Inspirációk</a><br>
+            <a href="#shop" data-i18n="nav_shop">Shop</a><br>
+            <a href="#custom" data-i18n="nav_custom">Egyedi kérés</a>
+          </div>
+
+          <div class="footer-col">
+            <h4 data-i18n="footer_contact">Kapcsolat</h4>
+            <a href="mailto:hello@pelda.hu">hello@pelda.hu</a><br>
+            <a href="#">Instagram</a><br>
+            <a href="#">Facebook</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // Header scroll behavior
+    const header = document.getElementById('siteHeader');
+    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Simple i18n
+    const dict = {
+      hu: {
+        brand: "Kreatív műhely",
+        brand_sub: "egyedi ajándékokra",
+        nav_services: "Mit alkotunk",
+        nav_inspiration: "Inspirációk",
+        nav_shop: "Shop",
+        nav_custom: "Egyedi kérés",
+
+        hero_title: "Kreatív műhely",
+        hero_lead: "Egyedi ajándékok és promóciós tárgyak – hangulatból, ötletből, szerethető részletekből.",
+        hero_cta_primary: "Egyedi rendelés",
+        hero_cta_secondary: "Inspiráció",
+        hero_cta_link: "Kész darabok",
+        hero_polaroid_cap: "Részletek, amikből történet lesz.",
+
+        services_title: "Mit alkotunk",
+        services_desc: "Kevesebb szöveg, több vizuál: a képek elmondják, mire vagyunk képesek.",
+        services_tag_custom: "custom",
+
+        insp_title: "Inspirációink",
+        insp_desc: "Kollázs-szerű válogatás. Kattints, és nézd meg közelebbről.",
+        insp_cta: "További munkáink",
+        tag_gift: "gift",
+        tag_promo: "promo",
+        tag_custom: "custom",
+        tag_detail: "detail",
+
+        process_title: "Ahogy készül",
+        process_desc: "Egyszerű, barátságos folyamat – nem kell mindent előre tudnod.",
+        step_idea: "Ötlet",
+        step_design: "Tervezés",
+        step_test: "Próba",
+        step_done: "Készítés",
+
+        shop_title: "Kész darabok",
+        shop_desc: "Kis szériák, gyors örömök. Ha azonnal vinnél valamit.",
+        badge_limited: "limitált",
+        prod1_name: "Gravírozott kulcstartó",
+        prod2_name: "Mintás bögre",
+        prod3_name: "Fa notebook borító",
+        shop_cta_shop: "Shop",
+        shop_cta_custom: "Egyedi kérés",
+
+        bigcta_title: "Mi lenne, ha…?",
+        bigcta_desc: "Elég egy vázlat, egy gondolat vagy egy fotó. Segítünk formát adni az ötletednek.",
+        bigcta_btn: "Mesélek róla",
+
+        footer_brand: "Kreatív műhely",
+        footer_note: "Nem termékeket mutatunk. Hangulatot, ötleteket és lehetőségeket – kis szériában, nagy figyelemmel.",
+        footer_links: "Linkek",
+        footer_contact: "Kapcsolat"
+      },
+
+      en: {
+        brand: "Creative studio",
+        brand_sub: "for custom gifts",
+        nav_services: "What we make",
+        nav_inspiration: "Inspiration",
+        nav_shop: "Shop",
+        nav_custom: "Custom request",
+
+        hero_title: "Creative studio",
+        hero_lead: "Custom gifts and promo items — built from mood, ideas, and lovable details.",
+        hero_cta_primary: "Custom order",
+        hero_cta_secondary: "Inspiration",
+        hero_cta_link: "Ready-made",
+        hero_polaroid_cap: "Details that turn into stories.",
+
+        services_title: "What we make",
+        services_desc: "Less text, more visuals: the images speak for themselves.",
+        services_tag_custom: "custom",
+
+        insp_title: "Our inspiration",
+        insp_desc: "A collage-style selection. Click to take a closer look.",
+        insp_cta: "More projects",
+        tag_gift: "gift",
+        tag_promo: "promo",
+        tag_custom: "custom",
+        tag_detail: "detail",
+
+        process_title: "How it’s made",
+        process_desc: "Simple and friendly — you don’t need to know everything upfront.",
+        step_idea: "Idea",
+        step_design: "Design",
+        step_test: "Test",
+        step_done: "Done",
+
+        shop_title: "Ready-made",
+        shop_desc: "Small batches, quick joy — if you want something now.",
+        badge_limited: "limited",
+        prod1_name: "Engraved keychain",
+        prod2_name: "Pattern mug",
+        prod3_name: "Wood notebook cover",
+        shop_cta_shop: "Shop",
+        shop_cta_custom: "Custom request",
+
+        bigcta_title: "What if…?",
+        bigcta_desc: "A sketch, a thought, or a photo is enough. We’ll help shape your idea.",
+        bigcta_btn: "Tell us",
+
+        footer_brand: "Creative studio",
+        footer_note: "We don’t just show products — we share mood, ideas, and possibilities. Small batches, big care.",
+        footer_links: "Links",
+        footer_contact: "Contact"
+      },
+
+      nl: {
+        brand: "Creatieve studio",
+        brand_sub: "voor unieke cadeaus",
+        nav_services: "Wat we maken",
+        nav_inspiration: "Inspiratie",
+        nav_shop: "Shop",
+        nav_custom: "Maatwerk",
+
+        hero_title: "Creatieve studio",
+        hero_lead: "Unieke cadeaus en promo-items — gemaakt vanuit sfeer, ideeën en mooie details.",
+        hero_cta_primary: "Maatwerk",
+        hero_cta_secondary: "Inspiratie",
+        hero_cta_link: "Kant-en-klaar",
+        hero_polaroid_cap: "Details die verhalen worden.",
+
+        services_title: "Wat we maken",
+        services_desc: "Minder tekst, meer beeld: de foto’s vertellen het verhaal.",
+        services_tag_custom: "maatwerk",
+
+        insp_title: "Onze inspiratie",
+        insp_desc: "Een collage-achtige selectie. Klik om dichterbij te kijken.",
+        insp_cta: "Meer werk",
+        tag_gift: "cadeau",
+        tag_promo: "promo",
+        tag_custom: "maatwerk",
+        tag_detail: "detail",
+
+        process_title: "Zo werkt het",
+        process_desc: "Eenvoudig en vriendelijk — je hoeft niet alles vooraf te weten.",
+        step_idea: "Idee",
+        step_design: "Ontwerp",
+        step_test: "Test",
+        step_done: "Klaar",
+
+        shop_title: "Kant-en-klaar",
+        shop_desc: "Kleine oplages, snel plezier — als je meteen iets wilt.",
+        badge_limited: "limited",
+        prod1_name: "Gegraveerde sleutelhanger",
+        prod2_name: "Mok met print",
+        prod3_name: "Houten notebook cover",
+        shop_cta_shop: "Shop",
+        shop_cta_custom: "Maatwerk",
+
+        bigcta_title: "Wat als…?",
+        bigcta_desc: "Een schets, een idee of een foto is genoeg. Wij geven je idee vorm.",
+        bigcta_btn: "Vertel het",
+
+        footer_brand: "Creatieve studio",
+        footer_note: "We tonen niet alleen producten — we delen sfeer, ideeën en mogelijkheden. Kleine oplages, veel aandacht.",
+        footer_links: "Links",
+        footer_contact: "Contact"
+      }
+    };
+
+    const setLang = (lang) => {
+      document.documentElement.lang = lang;
+      const pack = dict[lang] || dict.hu;
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (pack[key]) el.textContent = pack[key];
+      });
+      document.querySelectorAll(".lang button").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
+    };
+    document.querySelectorAll(".lang button").forEach(btn => btn.addEventListener("click", () => setLang(btn.dataset.lang)));
+    setLang("hu");
+  </script>
+
+  <!--
+    KÉPEK: hozz létre egy `assets/` mappát és tedd be a saját fotóidat ezekkel a nevekkel:
+      hero-workshop.jpg
+      hero-detail.jpg
+      service-print.jpg
+      service-textile.jpg
+      service-wood.jpg
+      service-metal.jpg
+      service-lifestyle.jpg
+      insp-1.jpg, insp-2.jpg, insp-3.jpg, insp-4.jpg
+      prod-1.jpg, prod-2.jpg, prod-3.jpg
+  -->
+</body>
+</html>
